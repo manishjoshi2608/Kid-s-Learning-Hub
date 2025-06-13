@@ -1,0 +1,130 @@
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
+                            QPushButton, QLabel, QFrame)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+import sys
+
+class GameMenu(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+        
+    def initUI(self):
+        # Set window properties
+        self.setWindowTitle('Kids Learning Games')
+        self.setGeometry(100, 100, 500, 500)
+        # Maximize the window
+        self.showMaximized()
+        
+        # Set application style
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #f0f8ff;
+            }
+            QLabel#titleLabel {
+                color: #2e86de;
+                font-size: 28px;
+                font-weight: bold;
+                padding: 10px;
+            }
+            QPushButton {
+                background-color: #54a0ff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 12px;
+                font-size: 16px;
+                margin: 8px 40px;
+                text-align: left;
+            }
+            QPushButton:hover {
+                background-color: #0984e3;
+            }
+        """)
+        
+        # Create central widget
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        
+        # Create layout
+        layout = QVBoxLayout(central_widget)
+        layout.setSpacing(10)
+        layout.setContentsMargins(30, 30, 30, 30)
+        
+        # Add title with emoji
+        title = QLabel("Choose a Game! 🎮", self)
+        title.setObjectName("titleLabel")
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
+        
+        # Add decorative line
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        line.setStyleSheet("background-color: #2e86de;")
+        layout.addWidget(line)
+        
+        layout.addSpacing(20)
+        
+        # Create game buttons with emojis
+        games = [
+            "1. Name the Object 📱",
+            "2. Color Game 🎨",
+            "3. Animal Sound 🐾",
+            "4. Shape Game ▽",
+            "5. Count the Numbers 🔢"
+        ]
+        for game in games:
+            button = QPushButton(game, self)
+            button.clicked.connect(self.gameSelected)
+            layout.addWidget(button)            
+        layout.addStretch()
+        
+    def gameSelected(self):
+        sender = self.sender()
+        game_name = sender.text()
+        print(f"Selected game: {game_name}")
+        
+        if "Name the Object" in game_name:
+            # Import here to avoid circular imports
+            from assets.games.name_object_game import NameObjectGame
+            self.name_object_game = NameObjectGame(self)
+            self.name_object_game.show()
+            
+        elif "Color Game" in game_name:
+            # Import Color Game - Using shapes-only version
+            from assets.games.color_game_shapes import ColorGame
+            self.color_game = ColorGame(self)
+            self.color_game.show()
+            
+        elif "Shape Game" in game_name:
+            # Import Shape Game
+            from assets.games.shape_game import ShapeGame
+            self.shape_game = ShapeGame(self)
+            self.shape_game.show()
+            
+        elif "Animal Sound" in game_name:
+            # Import Animal Sound Game
+            from assets.games.animal_sound_game import AnimalSoundGame
+            self.animal_sound_game = AnimalSoundGame(self)
+            self.animal_sound_game.show()
+            
+        elif "Count the Numbers" in game_name:
+            # Import Count the Numbers Game
+            from assets.games.count_numbers_game import CountNumbersGame
+            self.count_numbers_game = CountNumbersGame(self)
+            self.count_numbers_game.show()
+            
+        else:
+            # Other games will be implemented later
+            print(f"Game {game_name} not implemented yet.")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    
+    # Set application font
+    app.setFont(QFont("Arial", 12))
+    
+    window = GameMenu()
+    window.show()
+    sys.exit(app.exec_())
